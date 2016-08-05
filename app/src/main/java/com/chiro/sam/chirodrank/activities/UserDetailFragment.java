@@ -1,4 +1,4 @@
-package com.chiro.sam.chirodrank;
+package com.chiro.sam.chirodrank.activities;
 
 import android.app.Activity;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.chiro.sam.chirodrank.R;
 import com.chiro.sam.chirodrank.dummy.DummyContent;
 
 /**
