@@ -7,15 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     public static List<User> USERS = new ArrayList<>();
-
-    public static Map<Integer, User> MAP_USERS = new HashMap<>();
 
     // All Static variables
     // Database Version
@@ -73,7 +69,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single user
-    User getUser(int id) {
+    public User getUser(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_USERS, new String[] { KEY_ID,
@@ -108,7 +104,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 // Adding user to list
                 userList.add(user);
                 USERS.add(user);
-                MAP_USERS.put(user.getId(), user);
             } while (cursor.moveToNext());
         }
 

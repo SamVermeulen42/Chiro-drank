@@ -32,6 +32,8 @@ public class UserDetailFragment extends Fragment {
      */
     private User mItem;
 
+    private DatabaseHandler handler;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -43,11 +45,13 @@ public class UserDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        handler = new DatabaseHandler(getContext());
+
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DatabaseHandler.MAP_USERS.get(getArguments().getInt(ARG_ITEM_ID));
+            mItem = handler.getUser(getArguments().getInt(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
