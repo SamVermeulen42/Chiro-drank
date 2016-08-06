@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.chiro.sam.chirodrank.R;
-import com.chiro.sam.chirodrank.dummy.DummyContent;
 import com.chiro.sam.chirodrank.model.DatabaseHandler;
 import com.chiro.sam.chirodrank.model.User;
 
