@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.chiro.sam.chirodrank.R;
 import com.chiro.sam.chirodrank.dummy.DummyContent;
+import com.chiro.sam.chirodrank.model.DatabaseHandler;
+import com.chiro.sam.chirodrank.model.User;
 
 /**
  * A fragment representing a single User detail screen.
@@ -28,7 +30,7 @@ public class UserDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private User mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,12 +47,12 @@ public class UserDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = DatabaseHandler.MAP_USERS.get(getArguments().getInt(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.getName());
             }
         }
     }
@@ -62,7 +64,7 @@ public class UserDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.user_detail)).setText(mItem.details);
+            ((TextView) rootView.findViewById(R.id.user_detail)).setText(String.valueOf(mItem.getBalance()));
         }
 
         return rootView;

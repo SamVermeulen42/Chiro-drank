@@ -1,15 +1,21 @@
 package com.chiro.sam.chirodrank.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class DatabaseHandler extends SQLiteOpenHelper {
+
+    public static List<User> USERS = new ArrayList<>();
+
+    public static Map<Integer, User> MAP_USERS = new HashMap<>();
 
     // All Static variables
     // Database Version
@@ -54,7 +60,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     // Adding new user
-    void addUser(User user) {
+    public void addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -101,6 +107,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
                 // Adding user to list
                 userList.add(user);
+                USERS.add(user);
+                MAP_USERS.put(user.getId(), user);
             } while (cursor.moveToNext());
         }
 
