@@ -6,4 +6,5 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:textIsSelectable="true"
-    tools:context=".activities.UserDetailFragment" />
+    tools:context=".activities.UserDetailFragment"
+    android:gravity="center_horizontal" />
