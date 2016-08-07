@@ -1,6 +1,8 @@
 package com.chiro.sam.chirodrank.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,9 +10,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 
@@ -36,6 +40,8 @@ public class UserListActivity extends AppCompatActivity {
      * device.
      */
     private boolean mTwoPane;
+
+    private String m_text = "";
 
     private DatabaseHandler handler;
 
@@ -64,14 +70,38 @@ public class UserListActivity extends AppCompatActivity {
 
         final Random rg = new Random();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handler.addUser(new User("test" + rg.nextInt(10000), 0));
-                DatabaseHandler.USERS.clear();
-                handler.getAllUsers();
-                ((RecyclerView) recyclerView).getAdapter().notifyDataSetChanged();
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
+                builder.setTitle("Input new name");
+
+// Set up the input
+                final EditText input = new EditText(UserListActivity.this);
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                builder.setView(input);
+
+// Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        m_text = input.getText().toString();
+                        handler.addUser(new User(m_text, 0));
+                        DatabaseHandler.USERS.clear();
+                        handler.getAllUsers();
+                        ((RecyclerView) recyclerView).getAdapter().notifyDataSetChanged();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
             }
         });
 

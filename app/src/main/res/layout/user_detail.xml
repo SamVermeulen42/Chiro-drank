@@ -7,4 +7,5 @@
     android:padding="16dp"
     android:textIsSelectable="true"
     tools:context=".activities.UserDetailFragment"
-    android:gravity="center_horizontal" />
+    android:gravity="center_horizontal"
+    android:textSize="@android:dimen/app_icon_size" />
