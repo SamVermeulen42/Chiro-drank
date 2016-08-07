@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -44,6 +45,8 @@ public class UserListActivity extends AppCompatActivity {
     private String m_text = "";
 
     private DatabaseHandler handler;
+
+    private int selectedPos = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,13 +130,23 @@ public class UserListActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
             holder.mItem = mValues.get(position);
             holder.mContentView.setText(mValues.get(position).getName());
+
+            if(selectedPos == holder.getAdapterPosition()){
+                // Here I am just highlighting the background
+                holder.itemView.setBackgroundColor(Color.rgb(170, 170, 170));
+            }else{
+                holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+            }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    notifyItemChanged(selectedPos);
+                    selectedPos = holder.getAdapterPosition();
+                    notifyItemChanged(selectedPos);
                     if (mTwoPane) {
                         Bundle arguments = new Bundle();
                         arguments.putInt(UserDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
