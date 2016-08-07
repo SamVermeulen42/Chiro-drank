@@ -93,6 +93,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
 
+        USERS.clear();
+
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {

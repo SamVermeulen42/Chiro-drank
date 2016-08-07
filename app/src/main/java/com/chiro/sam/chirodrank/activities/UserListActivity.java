@@ -68,8 +68,6 @@ public class UserListActivity extends AppCompatActivity {
             mTwoPane = true;
         }
 
-        final Random rg = new Random();
-
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
