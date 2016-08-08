@@ -14,6 +14,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -38,11 +39,13 @@ public class UserDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The content this fragment is presenting.
      */
     private User mItem;
 
     private DatabaseHandler handler;
+
+    private SideSpinner beer, crate, heavy, chips;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -69,6 +72,18 @@ public class UserDetailFragment extends Fragment {
                 appBarLayout.setTitle(mItem.getName());
             }
         }
+        beer = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_beer);
+        crate = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_crate);
+        heavy = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_heavy);
+        chips = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_chips);
+
+        Button orderButton = (Button) this.getActivity().findViewById(R.id.button_order);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                order(beer.getValue(), crate.getValue(), heavy.getValue(), chips.getValue());
+            }
+        });
     }
 
     @Override
@@ -82,33 +97,10 @@ public class UserDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.user_detail)).setText(formatted);
         }
 
-        ((ImageButton) rootView.findViewById(R.id.button_delete)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("Delete " + mItem.getName() + " ?");
-
-                // Set up the buttons
-                builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        handler.deleteUser(mItem);
-                        Context context = getContext();
-                        Intent intent = new Intent(context, UserListActivity.class);
-                        context.startActivity(intent);
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-            }
-        });
-
         return rootView;
+    }
+
+    private void order(int beer, int crate, int heavy, int chips) {
+
     }
 }

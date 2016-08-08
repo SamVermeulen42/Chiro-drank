@@ -144,10 +144,10 @@ public class UserListActivity extends AppCompatActivity {
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    notifyItemChanged(selectedPos);
-                    selectedPos = holder.getAdapterPosition();
-                    notifyItemChanged(selectedPos);
                     if (mTwoPane) {
+                        notifyItemChanged(selectedPos);
+                        selectedPos = holder.getAdapterPosition();
+                        notifyItemChanged(selectedPos);
                         Bundle arguments = new Bundle();
                         arguments.putInt(UserDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
                         UserDetailFragment fragment = new UserDetailFragment();

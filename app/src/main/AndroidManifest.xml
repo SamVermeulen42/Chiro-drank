@@ -21,7 +21,6 @@
         <activity
             android:name=".activities.UserDetailActivity"
             android:label="@string/title_user_detail"
-            android:parentActivityName=".activities.UserListActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
