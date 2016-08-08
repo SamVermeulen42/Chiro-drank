@@ -1,54 +1,113 @@
-
+<?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/user_detail_size"
+        android:text="Large Text"
         android:id="@+id/user_detail"
-        style="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:textIsSelectable="true"
-        tools:context=".activities.UserDetailFragment"
-        android:gravity="center_horizontal"
-        android:textSize="@android:dimen/app_icon_size" />
+        android:layout_gravity="center_horizontal"/>
 
-    <com.chiro.sam.chirodrank.activities.SideSpinner
-        android:id="@+id/sidespinner_beer"
-        android:layout_width="match_parent"
+    <TableLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"/>
+        android:layout_gravity="center_horizontal">
 
-    <com.chiro.sam.chirodrank.activities.SideSpinner
-        android:id="@+id/sidespinner_crate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"/>
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <com.chiro.sam.chirodrank.activities.SideSpinner
-        android:id="@+id/sidespinner_heavy"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="€ 1.50"
+                android:id="@+id/textView"
+                android:layout_gravity="center_vertical" />
 
-    <com.chiro.sam.chirodrank.activities.SideSpinner
-        android:id="@+id/sidespinner_chips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"/>
+            <com.chiro.sam.chirodrank.activities.SideSpinner
+                android:id="@+id/sidespinner_beer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"/>
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="€ 15.00"
+                android:id="@+id/textView2"
+                android:layout_gravity="center_vertical" />
+
+            <com.chiro.sam.chirodrank.activities.SideSpinner
+                android:id="@+id/sidespinner_crate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="€ 1.50"
+                android:id="@+id/textView3"
+                android:layout_gravity="center_vertical" />
+
+            <com.chiro.sam.chirodrank.activities.SideSpinner
+                android:id="@+id/sidespinner_heavy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="€ 0.30"
+                android:id="@+id/textView4"
+                android:layout_gravity="center_vertical"/>
+
+            <com.chiro.sam.chirodrank.activities.SideSpinner
+                android:id="@+id/sidespinner_chips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"/>
+        </TableRow>
+
+    </TableLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Order"
-        android:id="@+id/button_order" />
-
+        android:text="Place order"
+        android:id="@+id/button_order"
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

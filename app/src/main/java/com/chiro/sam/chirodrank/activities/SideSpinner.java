@@ -63,15 +63,13 @@ public class SideSpinner extends LinearLayout {
                 value--;
                 if (value == 0) {
                     mPreviousButton.setVisibility(INVISIBLE);
-                } else {
-                    mPreviousButton.setVisibility(VISIBLE);
                 }
+                mNextButton.setVisibility(VISIBLE);
                 countView.setText(String.valueOf(value));
             }
         });
 
-
-        mNextButton = (Button)this
+        mNextButton = (Button) this
                 .findViewById(R.id.sidespinner_view_next);
         mNextButton
                 .setBackgroundResource(android.R.drawable.ic_media_next);
@@ -79,9 +77,14 @@ public class SideSpinner extends LinearLayout {
             @Override
             public void onClick(View view) {
                 value++;
+                mPreviousButton.setVisibility(VISIBLE);
                 countView.setText(String.valueOf(value));
             }
         });
+
+        mPreviousButton.setVisibility(INVISIBLE);
+
+        countView.setText("0");
     }
 
     public int getValue() {

@@ -135,7 +135,6 @@ public class UserListActivity extends AppCompatActivity {
             holder.mContentView.setText(mValues.get(position).getName());
 
             if(selectedPos == holder.getAdapterPosition()){
-                // Here I am just highlighting the background
                 holder.itemView.setBackgroundColor(Color.rgb(170, 170, 170));
             }else{
                 holder.itemView.setBackgroundColor(Color.TRANSPARENT);
@@ -159,7 +158,6 @@ public class UserListActivity extends AppCompatActivity {
                         Context context = v.getContext();
                         Intent intent = new Intent(context, UserDetailActivity.class);
                         intent.putExtra(UserDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
-
 
                         context.startActivity(intent);
                     }

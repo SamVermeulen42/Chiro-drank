@@ -43,8 +43,6 @@ public class UserDetailFragment extends Fragment {
      */
     private User mItem;
 
-    private DatabaseHandler handler;
-
     private SideSpinner beer, crate, heavy, chips;
 
     /**
@@ -58,7 +56,7 @@ public class UserDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        handler = new DatabaseHandler(getContext());
+        DatabaseHandler handler = new DatabaseHandler(getContext());
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -72,18 +70,6 @@ public class UserDetailFragment extends Fragment {
                 appBarLayout.setTitle(mItem.getName());
             }
         }
-        beer = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_beer);
-        crate = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_crate);
-        heavy = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_heavy);
-        chips = (SideSpinner) this.getActivity().findViewById(R.id.sidespinner_chips);
-
-        Button orderButton = (Button) this.getActivity().findViewById(R.id.button_order);
-        orderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                order(beer.getValue(), crate.getValue(), heavy.getValue(), chips.getValue());
-            }
-        });
     }
 
     @Override
@@ -96,6 +82,19 @@ public class UserDetailFragment extends Fragment {
             String formatted = String.format(Locale.ENGLISH, "€ %d.%02d", mItem.getBalance()/100, mItem.getBalance()%100);
             ((TextView) rootView.findViewById(R.id.user_detail)).setText(formatted);
         }
+
+        beer = (SideSpinner) rootView.findViewById(R.id.sidespinner_beer);
+        crate = (SideSpinner) rootView.findViewById(R.id.sidespinner_crate);
+        heavy = (SideSpinner) rootView.findViewById(R.id.sidespinner_heavy);
+        chips = (SideSpinner) rootView.findViewById(R.id.sidespinner_chips);
+
+        Button orderButton = (Button) rootView.findViewById(R.id.button_order);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                order(beer.getValue(), crate.getValue(), heavy.getValue(), chips.getValue());
+            }
+        });
 
         return rootView;
     }
