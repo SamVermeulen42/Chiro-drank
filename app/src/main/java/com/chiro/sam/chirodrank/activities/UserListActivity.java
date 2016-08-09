@@ -7,14 +7,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +22,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.chiro.sam.chirodrank.R;
-import com.chiro.sam.chirodrank.R.menu;
 import com.chiro.sam.chirodrank.model.DatabaseHandler;
 import com.chiro.sam.chirodrank.model.User;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * An activity representing a list of Users. This activity
@@ -56,6 +53,8 @@ public class UserListActivity extends AppCompatActivity {
     private boolean admin = false;
 
     private String password = "chiroadmin";
+
+    private Toolbar toolbar;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -90,40 +89,9 @@ public class UserListActivity extends AppCompatActivity {
             admin = getIntent().getExtras().getBoolean("admin", false);
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
-
-        if (admin) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
-            builder.setTitle("Input password");
-
-            final EditText input = new EditText(UserListActivity.this);
-
-            input.setInputType(InputType.TYPE_CLASS_TEXT);
-            builder.setView(input);
-
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    m_text = input.getText().toString();
-                    if (!m_text.equals(password)) {
-                        Toast.makeText(getBaseContext(), "Wrong password", Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                    finish();
-                }
-            });
-
-            builder.show();
-            toolbar.setBackgroundColor(Color.RED);
-        }
 
         final View recyclerView = findViewById(R.id.user_list);
         assert recyclerView != null;
@@ -175,6 +143,42 @@ public class UserListActivity extends AppCompatActivity {
         handler.getAllUsers();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (admin) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
+            builder.setTitle("Input password");
+
+            final EditText input = new EditText(UserListActivity.this);
+
+            input.setInputType(InputType.TYPE_CLASS_TEXT |
+                    InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_text = input.getText().toString();
+                    if (!m_text.equals(password)) {
+                        Toast.makeText(getBaseContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    finish();
+                }
+            });
+
+            builder.show();
+            toolbar.setBackgroundColor(Color.RED);
+        }
+    }
+
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DatabaseHandler.USERS));
     }
@@ -215,14 +219,24 @@ public class UserListActivity extends AppCompatActivity {
                         notifyItemChanged(selectedPos);
                         Bundle arguments = new Bundle();
                         arguments.putInt(UserDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
-                        UserDetailFragment fragment = new UserDetailFragment();
+                        Fragment fragment;
+                        if (admin) {
+                            fragment = new UserDetailAdminFragment();
+                        } else {
+                            fragment = new UserDetailFragment();
+                        }
                         fragment.setArguments(arguments);
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.user_detail_container, fragment)
                                 .commit();
                     } else {
                         Context context = v.getContext();
-                        Intent intent = new Intent(context, UserDetailActivity.class);
+                        Intent intent;
+                        if (admin) {
+                            intent = new Intent(context, UserDetailAdminActivity.class);
+                        } else {
+                            intent = new Intent(context, UserDetailActivity.class);
+                        }
                         intent.putExtra(UserDetailFragment.ARG_ITEM_ID, holder.mItem.getId());
 
                         context.startActivity(intent);

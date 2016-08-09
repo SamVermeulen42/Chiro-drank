@@ -26,6 +26,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.UserListActivity" />
         </activity>
+        <activity android:name=".activities.UserDetailAdminActivity"></activity>
     </application>
 
 </manifest>
