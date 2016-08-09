@@ -6,12 +6,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chiro.sam.chirodrank.R;
@@ -37,8 +35,6 @@ public class UserDetailFragment extends Fragment {
      * The content this fragment is presenting.
      */
     private User mItem;
-
-    private SideSpinner beer, crate, heavy, chips;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -78,10 +74,10 @@ public class UserDetailFragment extends Fragment {
             ((TextView) rootView.findViewById(R.id.user_detail)).setText(formatted);
         }
 
-        beer = (SideSpinner) rootView.findViewById(R.id.sidespinner_beer);
-        crate = (SideSpinner) rootView.findViewById(R.id.sidespinner_crate);
-        heavy = (SideSpinner) rootView.findViewById(R.id.sidespinner_heavy);
-        chips = (SideSpinner) rootView.findViewById(R.id.sidespinner_chips);
+        SideSpinner beer = (SideSpinner) rootView.findViewById(R.id.sidespinner_beer);
+        SideSpinner crate = (SideSpinner) rootView.findViewById(R.id.sidespinner_crate);
+        SideSpinner heavy = (SideSpinner) rootView.findViewById(R.id.sidespinner_heavy);
+        SideSpinner chips = (SideSpinner) rootView.findViewById(R.id.sidespinner_chips);
 
         Button orderButton = (Button) rootView.findViewById(R.id.button_order);
         orderButton.setOnClickListener(new View.OnClickListener() {

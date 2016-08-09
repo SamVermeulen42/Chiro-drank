@@ -13,13 +13,18 @@ import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.chiro.sam.chirodrank.R;
+import com.chiro.sam.chirodrank.R.menu;
 import com.chiro.sam.chirodrank.model.DatabaseHandler;
 import com.chiro.sam.chirodrank.model.User;
 
@@ -48,16 +53,77 @@ public class UserListActivity extends AppCompatActivity {
 
     private int selectedPos = -1;
 
+    private boolean admin = false;
+
+    private String password = "chiroadmin";
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_admin:
+                Intent intent = new Intent(this, UserListActivity.class);
+                intent.putExtra("admin", true);
+
+                startActivity(intent);
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_list);
 
         handler = new DatabaseHandler(this);
+        if (getIntent().getExtras() != null) {
+            admin = getIntent().getExtras().getBoolean("admin", false);
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
+
+        if (admin) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
+            builder.setTitle("Input password");
+
+            final EditText input = new EditText(UserListActivity.this);
+
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    m_text = input.getText().toString();
+                    if (!m_text.equals(password)) {
+                        Toast.makeText(getBaseContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    finish();
+                }
+            });
+
+            builder.show();
+            toolbar.setBackgroundColor(Color.RED);
+        }
 
         final View recyclerView = findViewById(R.id.user_list);
         assert recyclerView != null;
