@@ -1,22 +1,30 @@
 package com.chiro.sam.chirodrank.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chiro.sam.chirodrank.R;
 import com.chiro.sam.chirodrank.model.DatabaseHandler;
 import com.chiro.sam.chirodrank.model.User;
 
+import java.lang.reflect.Field;
 import java.util.Locale;
 
 public class UserDetailAdminFragment extends Fragment {
@@ -31,7 +39,7 @@ public class UserDetailAdminFragment extends Fragment {
      */
     private User mItem;
 
-    private boolean spinnerPlus = true;
+    private DatabaseHandler handler;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,7 +52,7 @@ public class UserDetailAdminFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseHandler handler = new DatabaseHandler(getContext());
+        handler = new DatabaseHandler(getContext());
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -64,11 +72,12 @@ public class UserDetailAdminFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.user_detail_admin, container, false);
+        final View rootView = inflater.inflate(R.layout.user_detail_admin, container, false);
 
         if (mItem != null) {
             String formatted = String.format(Locale.ENGLISH, "€ %d.%02d", mItem.getBalance() / 100, mItem.getBalance() % 100);
-            ((TextView) rootView.findViewById(R.id.text_admin_balance)).setText(formatted);
+            final TextView oldBalance = (TextView) rootView.findViewById(R.id.text_admin_balance);
+            oldBalance.setText(formatted);
 
             final NumberPicker sign = (NumberPicker) rootView.findViewById(R.id.numberPickerSign);
             sign.setMinValue(0);
@@ -86,13 +95,19 @@ public class UserDetailAdminFragment extends Fragment {
             };
             sign.setFormatter(formatterSign);
 
-            NumberPicker.Formatter formatter = new NumberPicker.Formatter() {
-                @Override
-                public String format(int value) {
-                    int temp = value * 10;
-                    return "" + temp;
-                }
-            };
+            // work around to fix display bug
+            Field f = null;
+            try {
+                f = NumberPicker.class.getDeclaredField("mInputText");
+                f.setAccessible(true);
+                EditText inputText = (EditText) f.get(sign);
+                inputText.setFilters(new InputFilter[0]);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
 
             final NumberPicker delta1 = (NumberPicker) rootView.findViewById(R.id.numberPickerDelta1);
             delta1.setMinValue(0);
@@ -101,8 +116,7 @@ public class UserDetailAdminFragment extends Fragment {
 
             final NumberPicker delta2 = (NumberPicker) rootView.findViewById(R.id.numberPickerDelta2);
             delta2.setMinValue(0);
-            delta2.setMaxValue(9); // div by 10 for formatter
-            delta2.setFormatter(formatter);
+            delta2.setMaxValue(99);
             delta2.setWrapSelectorWheel(false);
 
             final NumberPicker newValue1 = (NumberPicker) rootView.findViewById(R.id.numberPickerNew1);
@@ -113,9 +127,8 @@ public class UserDetailAdminFragment extends Fragment {
 
             final NumberPicker newValue2 = (NumberPicker) rootView.findViewById(R.id.numberPickerNew2);
             newValue2.setMinValue(0);
-            newValue2.setMaxValue(9); // div by 10 for formatter
-            newValue2.setValue((mItem.getBalance() % 100) / 10);
-            newValue2.setFormatter(formatter);
+            newValue2.setMaxValue(99);
+            newValue2.setValue((mItem.getBalance() % 100));
             newValue2.setWrapSelectorWheel(false);
 
             sign.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -123,12 +136,12 @@ public class UserDetailAdminFragment extends Fragment {
                 public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
                     int newV = mItem.getBalance();
                     if (newVal == 0) {
-                        newV += delta1.getValue() * 100 + delta2.getValue() * 10;
+                        newV += delta1.getValue() * 100 + delta2.getValue();
                     } else {
-                        newV -= delta1.getValue() * 100 + delta2.getValue() * 10;
+                        newV -= delta1.getValue() * 100 + delta2.getValue();
                     }
                     newValue1.setValue(newV / 100);
-                    newValue2.setValue((newV % 100) / 10);
+                    newValue2.setValue(newV % 100);
                 }
             });
 
@@ -148,19 +161,19 @@ public class UserDetailAdminFragment extends Fragment {
                 public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
                     int newV = mItem.getBalance();
                     if (sign.getValue() == 0) {
-                        newV += delta1.getValue() * 100 + delta2.getValue() * 10;
+                        newV += delta1.getValue() * 100 + delta2.getValue();
                     } else {
-                        newV -= delta1.getValue() * 100 + delta2.getValue() * 10;
+                        newV -= delta1.getValue() * 100 + delta2.getValue();
                     }
                     newValue1.setValue(newV / 100);
-                    newValue2.setValue((newV % 100) / 10);
+                    newValue2.setValue(newV % 100);
                 }
             });
 
             newValue1.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                 @Override
                 public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                    int newV = newVal * 100 + newValue2.getValue() * 10;
+                    int newV = newVal * 100 + newValue2.getValue();
                     int diff;
                     if (newV >= mItem.getBalance()) {
                         diff = newV - mItem.getBalance();
@@ -170,14 +183,14 @@ public class UserDetailAdminFragment extends Fragment {
                         sign.setValue(1);
                     }
                     delta1.setValue(diff / 100);
-                    delta2.setValue((diff % 100) / 10);
+                    delta2.setValue(diff % 100);
                 }
             });
 
             newValue2.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
                 @Override
                 public void onValueChange(NumberPicker numberPicker, int oldVal, int newVal) {
-                    int newV = newValue1.getValue() * 100 + newVal * 10;
+                    int newV = newValue1.getValue() * 100 + newVal;
                     int diff;
                     if (newV >= mItem.getBalance()) {
                         diff = newV - mItem.getBalance();
@@ -187,10 +200,46 @@ public class UserDetailAdminFragment extends Fragment {
                         sign.setValue(1);
                     }
                     delta1.setValue(diff / 100);
-                    delta2.setValue((diff % 100) / 10);
+                    delta2.setValue(diff % 100);
                 }
             });
 
+            Button changeBalanceButton = (Button) rootView.findViewById(R.id.button_change_balance);
+            changeBalanceButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mItem.setBalance(newValue1.getValue() * 100 + newValue2.getValue());
+                    handler.updateUser(mItem);
+                    String formatted = String.format(Locale.ENGLISH, "€ %d.%02d", mItem.getBalance() / 100, mItem.getBalance() % 100);
+                    oldBalance.setText(formatted);
+                }
+            });
+
+            Button deleteUserButton = (Button) rootView.findViewById(R.id.button_delete_user);
+            deleteUserButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Delete user ?");
+
+                    builder.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            handler.deleteUser(mItem);
+                            getActivity().finish();
+                            startActivity(getActivity().getIntent());
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+            });
         }
         return rootView;
     }
