@@ -6,13 +6,35 @@
     android:layout_height="match_parent">
 
 
-    <TextView
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/user_detail_size"
-        android:text="Large Text"
-        android:id="@+id/user_detail"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/user_detail_size"
+            android:text="Large Text"
+            android:id="@+id/user_detail_balance" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/user_detail_size"
+            android:text=" - € "
+            android:id="@+id/user_detail_diff_signing" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/user_detail_size"
+            android:text="0.00"
+            android:id="@+id/user_detail_diff" />
+    </LinearLayout>
+
+
 
     <TableLayout
         android:orientation="vertical"
@@ -28,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="€ 1.50"
+                android:text="€ 1.00"
                 android:id="@+id/textView"
                 android:layout_gravity="center_vertical" />
 

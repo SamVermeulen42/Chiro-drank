@@ -3,6 +3,7 @@ package com.chiro.sam.chirodrank.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chiro.sam.chirodrank.R;
 import com.chiro.sam.chirodrank.model.DatabaseHandler;
@@ -36,6 +38,13 @@ public class UserDetailFragment extends Fragment {
      */
     private User mItem;
 
+    private int beerCount = 0, crateCount = 0, heavyCount = 0, chipsCount = 0;
+
+    private TextView diffView, signView;
+    private Button orderButton;
+
+    private DatabaseHandler handler;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -47,7 +56,7 @@ public class UserDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseHandler handler = new DatabaseHandler(getContext());
+        handler = new DatabaseHandler(getContext());
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
             // Load the dummy content specified by the fragment
@@ -71,41 +80,95 @@ public class UserDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
             String formatted = String.format(Locale.ENGLISH, "€ %d.%02d", mItem.getBalance()/100, mItem.getBalance()%100);
-            ((TextView) rootView.findViewById(R.id.user_detail)).setText(formatted);
+            ((TextView) rootView.findViewById(R.id.user_detail_balance)).setText(formatted);
         }
 
-        SideSpinner beer = (SideSpinner) rootView.findViewById(R.id.sidespinner_beer);
-        SideSpinner crate = (SideSpinner) rootView.findViewById(R.id.sidespinner_crate);
-        SideSpinner heavy = (SideSpinner) rootView.findViewById(R.id.sidespinner_heavy);
-        SideSpinner chips = (SideSpinner) rootView.findViewById(R.id.sidespinner_chips);
+        diffView = (TextView) rootView.findViewById(R.id.user_detail_diff);
+        signView = (TextView) rootView.findViewById(R.id.user_detail_diff_signing);
 
-        Button orderButton = (Button) rootView.findViewById(R.id.button_order);
+        SideSpinner beer = (SideSpinner) rootView.findViewById(R.id.sidespinner_beer);
+        beer.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                beerCount = ((SideSpinner) view).getValue();
+                updateDiff();
+            }
+        });
+        SideSpinner crate = (SideSpinner) rootView.findViewById(R.id.sidespinner_crate);
+        crate.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                crateCount = ((SideSpinner) view).getValue();
+                updateDiff();
+            }
+        });
+        SideSpinner heavy = (SideSpinner) rootView.findViewById(R.id.sidespinner_heavy);
+        heavy.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                heavyCount = ((SideSpinner) view).getValue();
+                updateDiff();
+            }
+        });
+        SideSpinner chips = (SideSpinner) rootView.findViewById(R.id.sidespinner_chips);
+        chips.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                chipsCount = ((SideSpinner) view).getValue();
+                updateDiff();
+            }
+        });
+
+        orderButton = (Button) rootView.findViewById(R.id.button_order);
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setTitle("Verify transaction");
+                final int totalOrdered = chipsCount * 30 + crateCount * 1500 + heavyCount * 150 + beerCount * 100;
+                if (totalOrdered <= mItem.getBalance()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setTitle("Verify transaction");
 
-                // TODO: show transaction info
+                    // Set up the buttons
+                    builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                // Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO: make transaction
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                            mItem.setBalance(mItem.getBalance() - totalOrdered);
+                            handler.updateUser(mItem);
+                            getActivity().finish();
+                            startActivity(getActivity().getIntent());
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
 
-                builder.show();
+                    builder.show();
+                } else {
+                    Toast.makeText(getContext(), "Balance to low", Toast.LENGTH_LONG).show();
+                }
+
             }
         });
 
         return rootView;
+    }
+
+    public void updateDiff() {
+        int totalOrdered = chipsCount * 30 + crateCount * 1500 + heavyCount * 150 + beerCount * 100;
+        if (totalOrdered <= mItem.getBalance()) {
+            signView.setTextColor(Color.GREEN);
+            diffView.setTextColor(Color.GREEN);
+            orderButton.setEnabled(true);
+
+        } else {
+            signView.setTextColor(Color.RED);
+            diffView.setTextColor(Color.RED);
+            orderButton.setEnabled(false);
+        }
+        diffView.setText(String.valueOf(totalOrdered / 100) + "." + String.valueOf(totalOrdered % 100));
     }
 }
