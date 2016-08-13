@@ -2,7 +2,9 @@ package com.chiro.sam.chirodrank.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -226,8 +228,12 @@ public class UserDetailAdminFragment extends Fragment {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             handler.deleteUser(mItem);
-                            getActivity().finish();
-                            startActivity(getActivity().getIntent());
+                            Context context = getContext();
+                            Intent intent;
+                            intent = new Intent(context, UserListActivity.class);
+                            intent.putExtra("admin  ", mItem.getId());
+
+                            context.startActivity(intent);
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

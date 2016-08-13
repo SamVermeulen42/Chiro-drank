@@ -2,7 +2,9 @@ package com.chiro.sam.chirodrank.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -40,7 +42,7 @@ public class UserDetailFragment extends Fragment {
 
     private int beerCount = 0, crateCount = 0, heavyCount = 0, chipsCount = 0;
 
-    private TextView diffView, signView;
+    private TextView diffView, signView, balanceView;
     private Button orderButton;
 
     private DatabaseHandler handler;
@@ -79,8 +81,9 @@ public class UserDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
+            balanceView = ((TextView) rootView.findViewById(R.id.user_detail_balance));
             String formatted = String.format(Locale.ENGLISH, "€ %d.%02d", mItem.getBalance()/100, mItem.getBalance()%100);
-            ((TextView) rootView.findViewById(R.id.user_detail_balance)).setText(formatted);
+            balanceView.setText(formatted);
         }
 
         diffView = (TextView) rootView.findViewById(R.id.user_detail_diff);
@@ -132,11 +135,14 @@ public class UserDetailFragment extends Fragment {
                     builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
                             mItem.setBalance(mItem.getBalance() - totalOrdered);
                             handler.updateUser(mItem);
-                            getActivity().finish();
-                            startActivity(getActivity().getIntent());
+                            Context context = getContext();
+                            Intent intent;
+                            intent = new Intent(context, UserListActivity.class);
+
+                            context.startActivity(intent);
+                            Toast.makeText(getContext(), "Transaction complete", Toast.LENGTH_LONG).show();
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
